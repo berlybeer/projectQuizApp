@@ -21,7 +21,14 @@ var quizController = (function(){
 	};
 
 
+			if(questionLocalStorage.getQuestionCollection() === null){
+				questionLocalStorage.setQuestionCollection([]);
+				
+			}
+
 	return{
+
+		getQuestionLocalStorage: questionLocalStorage,
 		addQuestionOnLocalStorage: function(newQuestionText, opts){
 			var optionsArr, corrAns, questionId, newQuestion, getStoredQuests, isChecked;
 
@@ -75,15 +82,19 @@ var quizController = (function(){
 							opts[x].previousElementSibling.checked = false;
 						}
 						console.log(questionLocalStorage.getQuestionCollection());
+						return true;
 					}else{
 						alert('You missed to check correct answer, or you checked answer without value');
+						return false;
 					}
 				}else{
-					alert('You must insert at least two options')
+					alert('You must insert at least two options');
+					return false;
 				}
 
 			}else{
-				alert('Please, Insert question.')
+				alert('Please, Insert question.');
+				return false;
 			}	
 		}
 	};
@@ -97,7 +108,8 @@ var UIController = (function(){
 		questionInsertBtn: document.getElementById("question-insert-btn"),
 		newQuestionText: document.getElementById("new-question-text"),
 		adminOptions: document.querySelectorAll(".admin-option"),
-		adminOptionsContainer: document.querySelector(".admin-options-container")
+		adminOptionsContainer: document.querySelector(".admin-options-container"),
+		insertedQuestsWrapper: document.querySelector(".inserted-questions-wrapper")
 
 	};
 	return {
@@ -110,17 +122,40 @@ var UIController = (function(){
 				var inputHTML, z;
 				z = document.querySelectorAll('.admin-option').length;
 
+			
+				console.log(z);
 
 				inputHTML = '<div class="admin-option-wrapper"><input type="radio" class="admin-option-'+z+'" name="answer" value="'+z+'"><input type="text" class="admin-option admin-option-'+z+'" value=""></div>';
 
 				domItems.adminOptionsContainer.insertAdjacentHTML('beforeend', inputHTML);
 
-				domItems.adminOptionsContainer.lastElementChild.previousElementSibling.lastElementChild.removeEventListener('focus', addInput);
 
+				domItems.adminOptionsContainer.lastElementChild.previousElementSibling.lastElementChild.removeEventListener('focus', addInput);
+				domItems.adminOptionsContainer.lastElementChild.lastElementChild.addEventListener('focus', addInput);
 
 			}
 
 			domItems.adminOptionsContainer.lastElementChild.lastElementChild.addEventListener('focus', addInput);
+		},
+
+
+		createQuestionList: function(getQuestions){
+
+			var questHTML, numberingArr;
+
+			numberingArr = [];
+
+			domItems.insertedQuestsWrapper.innerHTML = "";
+
+			for(var i = 0; i < getQuestions.getQuestionCollection().length; i++){
+
+				numberingArr.push(i+1);
+				questHTML = '<p><span> ' + numberingArr[i] +'. ' + getQuestions.getQuestionCollection()[i].questionText +  '</span><button id="question-' + getQuestions.getQuestionCollection()[i].id + '">Edit</button></p>';
+
+				console.log(getQuestions.getQuestionCollection()[i].id);
+				domItems.insertedQuestsWrapper.insertAdjacentHTML('afterbegin', questHTML);  
+			}
+
 		}
 	};
 
@@ -132,8 +167,14 @@ var controller = (function(quizCtrl, UICtrl){
 
 	UICtrl.addInputsDynamically();
 
+	UICtrl.createQuestionList(quizCtrl.getQuestionLocalStorage);
+
 	selectedDomItems.questionInsertBtn.addEventListener('click', function(){
-		quizCtrl.addQuestionOnLocalStorage(selectedDomItems.newQuestionText, selectedDomItems.adminOptions);
+		var adminOptions = document.querySelectorAll('.admin-option');
+		var checkBoolean = quizCtrl.addQuestionOnLocalStorage(selectedDomItems.newQuestionText, adminOptions);
+		if(checkBoolean){
+			UICtrl.createQuestionList(quizCtrl.getQuestionLocalStorage);
+		}
 	});
 
 })(quizController, UIController);
