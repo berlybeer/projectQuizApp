@@ -21,12 +21,17 @@ var quizController = (function(){
 	};
 
 
-			if(questionLocalStorage.getQuestionCollection() === null){
-				questionLocalStorage.setQuestionCollection([]);
-				
-			}
+	if(questionLocalStorage.getQuestionCollection() === null){
+		questionLocalStorage.setQuestionCollection([]);
+		
+	}
+
+	var quizProgress = {
+		questionIndex: 0
+	}
 
 	return{
+		getQuizProgress: quizProgress,
 
 		getQuestionLocalStorage: questionLocalStorage,
 		addQuestionOnLocalStorage: function(newQuestionText, opts){
@@ -113,7 +118,12 @@ var UIController = (function(){
 		questUpdateBtn: document.getElementById("question-update-btn"),
 		questDeleteBtn: document.getElementById("question-delete-btn"),
 		questInsertBtn: document.getElementById("question-insert-btn"),
-		questsClearBtn: document.getElementById("questions-clear-btn")
+		questsClearBtn: document.getElementById("questions-clear-btn"),
+
+		askedQuestText: document.getElementById("asked-question-text"),
+		quizOptionsWrapper: document.querySelector(".quiz-options-wrapper")
+
+
 
 
 	};
@@ -306,6 +316,27 @@ var UIController = (function(){
 				}
 
 			}
+		},
+
+		displayQuestion: function(storageQuestList, progress){
+
+			var newOptionHTML, characterArr;
+
+			characterArr = ['A','B','C','D','E','F'];
+
+			if(storageQuestList.getQuestionCollection().length > 0){
+
+				domItems.askedQuestText.textContent = storageQuestList.getQuestionCollection()[progress.questionIndex].questionText;
+				domItems.quizOptionsWrapper.innerHTML = '';
+
+				for(var i = 0; i < storageQuestList.getQuestionCollection()[progress.questionIndex].options.length; i++){
+					newOptionHTML = '<div class="choice-'+ i +'"><span class="choice-'+ i +'">'+ characterArr[i] +'</span><p  class="choice-'+ i +'">'+ storageQuestList.getQuestionCollection()[progress.questionIndex].options[i] + '</p></div>'
+					domItems.quizOptionsWrapper.insertAdjacentHTML('beforeend', newOptionHTML);
+				}
+
+
+			}
+
 		}
 	};
 
@@ -334,5 +365,7 @@ var controller = (function(quizCtrl, UICtrl){
 	selectedDomItems.questsClearBtn.addEventListener('click', function(){
 		UICtrl.clearQuestList(quizCtrl.getQuestionLocalStorage);
 	});
+
+	UICtrl.displayQuestion(quizCtrl.getQuestionLocalStorage, quizCtrl.getQuizProgress);
 
 })(quizController, UIController);
