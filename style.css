@@ -661,7 +661,7 @@ div.quiz-options-wrapper div span {
     font-weight: bold;
     border-radius: 3px;
     transition: all .2s;
-    background: rgba(229, 227, 42, .5)
+    background: rgba(65, 179, 163, .5)
 }
 
 div.quiz-options-wrapper div span::before {
@@ -682,7 +682,7 @@ div.quiz-options-wrapper div span::before {
 div.quiz-options-wrapper div:hover > span {
     border: 1px solid #ddd;
     color: #fff;
-    background-color: rgba(61, 73, 99, .7);
+    background-color: rgba(65, 179, 163, .7);
 }
 
 div.quiz-options-wrapper div:hover > span::before {
