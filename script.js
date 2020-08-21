@@ -101,7 +101,19 @@ var quizController = (function(){
 				alert('Please, Insert question.');
 				return false;
 			}	
+		},
+
+		checkAnswer: function(answer){
+
+			if(questionLocalStorage.getQuestionCollection()[quizProgress.questionIndex].correctAnswer === answer.textContent){
+				return true;
+			}else{
+				return false;
+			}
+
+
 		}
+
 	};
 
 })();
@@ -377,5 +389,25 @@ var controller = (function(quizCtrl, UICtrl){
 	UICtrl.displayQuestion(quizCtrl.getQuestionLocalStorage, quizCtrl.getQuizProgress);
 
 	UICtrl.displayProgress(quizCtrl.getQuestionLocalStorage, quizCtrl.getQuizProgress);
+
+	selectedDomItems.quizOptionsWrapper.addEventListener('click', function(e){
+
+		var updateOptionsDiv = selectedDomItems.quizOptionsWrapper.querySelectorAll('div');
+
+		for(var i = 0; i < updateOptionsDiv.length; i ++){
+
+			if(e.target.className == 'choice-' + i){
+
+				var answer = document.querySelector('.quiz-options-wrapper div p.' + e.target.className);
+				quizCtrl.checkAnswer(answer);
+
+
+			}
+
+
+		}
+
+	});
+
 
 })(quizController, UIController);
