@@ -143,6 +143,8 @@ var quizController = (function(){
 		checkAnswer: function(answer){
 
 			if(questionLocalStorage.getQuestionCollection()[quizProgress.questionIndex].correctAnswer === answer.textContent){
+				currPersonData.score++;
+
 				return true;
 			}else{
 				return false;
@@ -218,6 +220,10 @@ var UIController = (function(){
 		startQuizBtn: document.getElementById("start-quiz-btn"),
 		firstNameInput:document.getElementById("firstname"),
 		lastNameInput: document.getElementById("lastname"),
+
+		//******Final Result Section
+		finalResultSection: document.querySelector(".final-result-container"),
+		finalScoreText: document.getElementById("final-score-text"),
 
 
 
@@ -502,6 +508,14 @@ var UIController = (function(){
 				alert('Please, enter your first name and last name.');
 			}
 
+		},
+
+		finalResult: function(currPerson){
+
+			domItems.finalScoreText.textContent = currPerson.fullname[0] + ' ' + currPerson.fullname[1] + ', Your final score is ' + currPerson.score;
+			domItems.quizSection.style.display = 'none';
+
+			domItems.finalResultSection.style.display = 'block';
 		}
 
 
@@ -561,7 +575,9 @@ var controller = (function(quizCtrl, UICtrl){
 				var nextQuestion = function(questData, progress){
 
 					if(quizCtrl.isFinished()){
-						console.log('Finished');
+						quizCtrl.addPerson();
+						UICtrl.finalResult(quizCtrl.getCurrPersonData);
+
 					}else{
 						UICtrl.resetDesing();
 						quizCtrl.getQuizProgress.questionIndex++;
